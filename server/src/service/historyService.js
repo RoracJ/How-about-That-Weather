@@ -1,9 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-// Define __filename and __dirname for ES module compatibility
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Define the City class directly here
 class City {
     constructor(id, name) {
         this.id = id;
@@ -29,8 +26,29 @@ class HistoryService {
             throw error;
         }
     }
-    async getCities() {
-        return await this.read();
+    async getHistory() {
+        try {
+            return await this.getCities();
+        }
+        catch (error) {
+            console.error('Error retrieving history:', error.message);
+            throw error;
+        }
+    }
+    async deleteSearchById(id) {
+        try {
+            const cities = await this.getCities();
+            const updatedCities = cities.filter(city => city.id !== id);
+            if (cities.length === updatedCities.length) {
+                return false; // No city was removed
+            }
+            await this.write(updatedCities);
+            return true;
+        }
+        catch (error) {
+            console.error('Error deleting search by ID:', error.message);
+            throw error;
+        }
     }
     async read() {
         try {
@@ -57,6 +75,32 @@ class HistoryService {
         }
         catch (error) {
             console.error('Error writing to file:', error.message);
+            throw error;
+        }
+    }
+    async getCities() {
+        return await this.read();
+    }
+    async addCity(cityName) {
+        try {
+            const cities = await this.getCities();
+            const newCity = new City(this.generateId(), cityName);
+            cities.push(newCity);
+            await this.write(cities);
+        }
+        catch (error) {
+            console.error('Error adding city:', error.message);
+            throw error;
+        }
+    }
+    async removeCity(id) {
+        try {
+            const cities = await this.getCities();
+            const updatedCities = cities.filter(city => city.id !== id);
+            await this.write(updatedCities);
+        }
+        catch (error) {
+            console.error('Error removing city:', error.message);
             throw error;
         }
     }
