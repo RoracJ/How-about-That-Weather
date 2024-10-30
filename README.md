@@ -15,10 +15,10 @@ A weather dashboard application that calls the OpenWeather API and renders data 
 - [Questions](#questions)
 
 ## Installation
-npm run server:dev
+npm run build
 
 ## Usage
-npm run server:dev
+npm run start
 
 ## Contributing
 make a pull request
